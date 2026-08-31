@@ -13,9 +13,10 @@ const error = ref('')
 
 async function onSubmit(event) {
   const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
-  const honeypot = event.target.querySelector('[name="botcheck"]')
+  const formEl = event.currentTarget
+  const honeypot = formEl.querySelector('[name="botcheck"]')
 
-  if (honeypot?.value) {
+  if (honeypot instanceof HTMLInputElement && honeypot.checked) {
     return
   }
 
