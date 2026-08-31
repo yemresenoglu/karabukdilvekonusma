@@ -8,9 +8,40 @@ const form = reactive({
 })
 
 const submitted = ref(false)
+const submitting = ref(false)
+const error = ref('')
 
-function onSubmit() {
-  submitted.value = true
+async function onSubmit() {
+  submitting.value = true
+  error.value = ''
+
+  const body = new URLSearchParams({
+    'form-name': 'contact',
+    name: form.name,
+    phone: form.phone,
+    message: form.message,
+  }).toString()
+
+  try {
+    const response = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    })
+
+    if (!response.ok) {
+      throw new Error('Form submission failed')
+    }
+
+    submitted.value = true
+    form.name = ''
+    form.phone = ''
+    form.message = ''
+  } catch {
+    error.value = 'Mesaj gönderilemedi. Lütfen tekrar deneyin veya doğrudan arayın.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -25,12 +56,28 @@ function onSubmit() {
         </p>
       </div>
 
-      <form class="contact__form" @submit.prevent="onSubmit">
+      <form
+        class="contact__form"
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+        @submit.prevent="onSubmit"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+
         <div v-if="submitted" class="contact__success" role="status">
-          Teşekkürler. Talebiniz alındı — bu bir demo formudur.
+          Teşekkürler. Talebiniz alındı; en kısa sürede dönüş yapılacaktır.
         </div>
 
         <template v-else>
+          <p class="contact__honeypot" aria-hidden="true">
+            <label>
+              Bu alanı boş bırakın
+              <input type="text" name="bot-field" tabindex="-1" autocomplete="off" />
+            </label>
+          </p>
+
           <label>
             Ad Soyad
             <input v-model="form.name" type="text" name="name" required autocomplete="name" />
@@ -51,7 +98,11 @@ function onSubmit() {
             ></textarea>
           </label>
 
-          <button class="btn btn-primary" type="submit">Gönder</button>
+          <p v-if="error" class="contact__error" role="alert">{{ error }}</p>
+
+          <button class="btn btn-primary" type="submit" :disabled="submitting">
+            {{ submitting ? 'Gönderiliyor…' : 'Gönder' }}
+          </button>
         </template>
       </form>
 
@@ -179,6 +230,34 @@ function onSubmit() {
 .contact__form .btn {
   justify-self: center;
   margin-top: 0.35rem;
+}
+
+.contact__form .btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
+}
+
+.contact__honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.contact__error {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.85rem;
+  background: rgba(180, 60, 50, 0.08);
+  color: #8f2f26;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .contact__success {
