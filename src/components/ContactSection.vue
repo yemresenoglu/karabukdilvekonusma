@@ -11,25 +11,42 @@ const submitted = ref(false)
 const submitting = ref(false)
 const error = ref('')
 
-async function onSubmit() {
+async function onSubmit(event) {
+  const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
+  const honeypot = event.target.querySelector('[name="botcheck"]')
+
+  if (honeypot?.value) {
+    return
+  }
+
+  if (!accessKey) {
+    error.value = 'Form şu an yapılandırılıyor. Lütfen telefon veya e-posta ile ulaşın.'
+    return
+  }
+
   submitting.value = true
   error.value = ''
 
-  const body = new URLSearchParams({
-    'form-name': 'contact',
-    name: form.name,
-    phone: form.phone,
-    message: form.message,
-  }).toString()
-
   try {
-    const response = await fetch('/', {
+    const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject: 'Web sitesi iletişim formu',
+        from_name: form.name,
+        name: form.name,
+        phone: form.phone,
+        message: form.message,
+      }),
     })
 
-    if (!response.ok) {
+    const result = await response.json()
+
+    if (!response.ok || !result.success) {
       throw new Error('Form submission failed')
     }
 
@@ -56,16 +73,7 @@ async function onSubmit() {
         </p>
       </div>
 
-      <form
-        class="contact__form"
-        name="contact"
-        method="POST"
-        data-netlify="true"
-        data-netlify-honeypot="bot-field"
-        @submit.prevent="onSubmit"
-      >
-        <input type="hidden" name="form-name" value="contact" />
-
+      <form class="contact__form" @submit.prevent="onSubmit">
         <div v-if="submitted" class="contact__success" role="status">
           Teşekkürler. Talebiniz alındı; en kısa sürede dönüş yapılacaktır.
         </div>
@@ -74,7 +82,7 @@ async function onSubmit() {
           <p class="contact__honeypot" aria-hidden="true">
             <label>
               Bu alanı boş bırakın
-              <input type="text" name="bot-field" tabindex="-1" autocomplete="off" />
+              <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
             </label>
           </p>
 
