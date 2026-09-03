@@ -1,23 +1,22 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import giris from '../assets/klinik/giris.jpg'
 import tabela from '../assets/klinik/tabela.jpg'
+import beklemeSalonu from '../assets/klinik/bekleme-salonu.jpg'
 import koridor from '../assets/klinik/koridor.jpg'
 import duvarDekor from '../assets/klinik/duvar-dekor.jpg'
-import uygulamaOdasi from '../assets/klinik/uygulama-odasi.jpg'
 import terapiOdasi from '../assets/klinik/terapi-odasi.jpg'
 import manzara from '../assets/klinik/manzara.jpg'
 
 const photos = [
   {
-    src: giris,
-    alt: 'Klinik giriş ve bekleme alanı',
-    caption: 'Giriş ve bekleme alanı',
-  },
-  {
     src: tabela,
     alt: 'Dil ve Konuşma Terapisti İlknur Coşkun Karaveli tabelası',
     caption: 'Klinik tabelası',
+  },
+  {
+    src: beklemeSalonu,
+    alt: 'Bekleme salonu ve sertifika duvarı',
+    caption: 'Bekleme salonu',
   },
   {
     src: koridor,
@@ -28,11 +27,6 @@ const photos = [
     src: duvarDekor,
     alt: 'İletişim dünyaya açılan bir köprüdür duvar dekoru',
     caption: 'Bekleme alanı dekoru',
-  },
-  {
-    src: uygulamaOdasi,
-    alt: 'Uygulama odası girişi',
-    caption: 'Uygulama odası',
   },
   {
     src: terapiOdasi,
@@ -132,6 +126,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(1.25rem, 3vw, 2rem);
+  align-items: start;
 }
 
 .clinic__trigger {
@@ -147,8 +142,10 @@ onUnmounted(() => {
   aspect-ratio: 4 / 3;
   object-fit: cover;
   object-position: center;
+  display: block;
   border-radius: 1rem;
   box-shadow: var(--shadow-soft);
+  background: var(--color-bg-deep);
   transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
 }
 
@@ -177,8 +174,10 @@ onUnmounted(() => {
 }
 
 .lightbox img {
-  width: min(100%, 960px);
-  max-height: min(82vh, 960px);
+  width: auto;
+  height: auto;
+  max-width: min(100%, 720px);
+  max-height: min(88vh, 960px);
   object-fit: contain;
   border-radius: 0.75rem;
   background: #fff;

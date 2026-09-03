@@ -1,6 +1,13 @@
 <script setup>
 import { reactive, ref } from 'vue'
 
+const address =
+  'Yenişehir, Ömer Lütfi Özaytaç Caddesi No:5 Kat:2 Daire:202, 78000 Merkez/Karabük'
+const coordinates = '41.197423,32.618969'
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${coordinates}`
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinates}`
+const mapsEmbedUrl = `https://www.google.com/maps?q=${coordinates}&hl=tr&z=17&output=embed`
+
 const form = reactive({
   name: '',
   phone: '',
@@ -117,10 +124,6 @@ async function onSubmit(event) {
 
       <ul class="contact__meta reveal">
         <li>
-          <span>Konum</span>
-          <strong>Yenişehir, Ömer Lütfi Özaytaç Caddesi No:5 Kat:2 Daire:202, 78000 Merkez/Karabük</strong>
-        </li>
-        <li>
           <span>Telefon</span>
           <strong>
             <a href="tel:+905013378878">0501 337 88 78</a>
@@ -133,6 +136,37 @@ async function onSubmit(event) {
           </strong>
         </li>
       </ul>
+
+      <div class="contact__location reveal">
+        <span class="contact__location-label">Konum</span>
+        <a
+          class="contact__address"
+          :href="mapsUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ address }}
+        </a>
+
+        <div class="contact__map">
+          <iframe
+            :src="mapsEmbedUrl"
+            title="Dil ve Konuşma Terapisti İlknur Coşkun Karaveli klinik konumu"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <a
+          class="contact__directions"
+          :href="directionsUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Yol tarifi al
+        </a>
+      </div>
 
       <div class="contact__channels reveal">
         <a
@@ -308,6 +342,72 @@ async function onSubmit(event) {
   color: var(--color-brand);
 }
 
+.contact__location {
+  margin-top: 2.75rem;
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 36rem);
+  text-align: center;
+}
+
+.contact__location-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-brand-soft);
+}
+
+.contact__address {
+  font-weight: 500;
+  color: var(--color-ink);
+  line-height: 1.55;
+  transition: color 0.2s ease;
+}
+
+.contact__address:hover {
+  color: var(--color-brand);
+}
+
+.contact__map {
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 0.15rem);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-soft);
+  background: #fff;
+}
+
+.contact__map iframe {
+  display: block;
+  width: 100%;
+  height: clamp(220px, 42vw, 320px);
+  border: 0;
+}
+
+.contact__directions {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(31, 92, 87, 0.18);
+  background: #fff;
+  color: var(--color-brand-deep);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: transform 0.35s var(--ease-out), background 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.35s var(--ease-out);
+}
+
+.contact__directions:hover {
+  transform: translateY(-2px);
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #f7fbfa;
+  box-shadow: 0 12px 28px rgba(31, 92, 87, 0.2);
+}
+
 .contact__channels {
   margin-top: 1.75rem;
   display: flex;
@@ -350,7 +450,8 @@ async function onSubmit(event) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .contact__channel:hover {
+  .contact__channel:hover,
+  .contact__directions:hover {
     transform: none;
   }
 }
