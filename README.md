@@ -1,4 +1,3 @@
-# Özel Sağlık Hizmet Birimi
 # Dil ve Konuşma Terapisti İlknur Coşkun Karaveli
 
 Vue 3 (JavaScript) ile hazırlanmış modern, tek sayfalık (SPA) web sitesi.

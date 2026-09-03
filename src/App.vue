@@ -6,6 +6,7 @@ import AboutSection from './components/AboutSection.vue'
 import ServicesSection from './components/ServicesSection.vue'
 import ApproachSection from './components/ApproachSection.vue'
 import CertificatesSection from './components/CertificatesSection.vue'
+import ClinicSection from './components/ClinicSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import SiteFooter from './components/SiteFooter.vue'
 
@@ -50,6 +51,7 @@ onUnmounted(() => {
     <ServicesSection />
     <ApproachSection />
     <CertificatesSection />
+    <ClinicSection />
     <ContactSection />
   </main>
   <SiteFooter />

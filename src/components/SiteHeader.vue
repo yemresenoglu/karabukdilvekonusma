@@ -19,6 +19,7 @@ const links = [
   { href: '#calisma-alanlarim', label: 'Çalışma Alanlarım' },
   { href: '#yaklasim', label: 'Yaklaşım' },
   { href: '#sertifikalarim', label: 'Sertifikalarım' },
+  { href: '#klinik', label: 'Kliniğimiz' },
   { href: '#iletisim', label: 'İletişim' },
 ]
 
@@ -77,10 +78,7 @@ onUnmounted(() => {
     <div class="container header__inner">
       <a class="logo" href="#ust" @click="closeMenu">
         <span class="logo__mark" aria-hidden="true"></span>
-        <span class="logo__text">
-          <span>Özel Sağlık Hizmet Birimi</span>
-          <span>Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</span>
-        </span>
+        <span class="logo__text">Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</span>
       </a>
 
       <button

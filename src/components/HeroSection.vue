@@ -12,10 +12,7 @@
     </div>
 
     <div class="container hero__content">
-      <p class="hero__brand">
-        <span>Özel Sağlık Hizmet Birimi</span>
-        <span>Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</span>
-      </p>
+      <p class="hero__brand">Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</p>
       <h1>İletişim dünyaya açılan bir köprüdür.</h1>
       <p class="hero__lead">
         Çocuklar ve yetişkinler için sıcak, bilimsel ve bireysel dil ve konuşma terapisi.
@@ -81,10 +78,6 @@
   margin-bottom: 1rem;
   max-width: 36ch;
   color: #e8f3f1;
-}
-
-.hero__brand span {
-  display: block;
 }
 
 .hero h1 {
