@@ -6,7 +6,10 @@ const year = new Date().getFullYear()
   <footer class="footer">
     <div class="container footer__inner">
       <div>
-        <p class="footer__brand">Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</p>
+        <p class="footer__brand">
+          <span>Özel Sağlık Hizmet Birimi</span>
+          <span>Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</span>
+        </p>
       </div>
       <p class="footer__copy">© {{ year }}</p>
     </div>
