@@ -1,5 +1,8 @@
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const scrolled = ref(false)
 const menuOpen = ref(false)
@@ -7,21 +10,36 @@ const isMobile = ref(false)
 const menuDialog = ref(null)
 let mobileQuery
 
+const isHome = computed(() => route.name === 'home')
+const headerSolid = computed(() => scrolled.value || menuOpen.value || !isHome.value)
+
+const navLinks = [
+  { type: 'section', hash: '#hakkimda', label: 'Hakkımda' },
+  { type: 'section', hash: '#calisma-alanlarim', label: 'Çalışma Alanlarım' },
+  { type: 'section', hash: '#yaklasim', label: 'Yaklaşım' },
+  { type: 'section', hash: '#sertifikalarim', label: 'Sertifikalarım' },
+  { type: 'section', hash: '#klinik', label: 'Kliniğimiz' },
+  { type: 'section', hash: '#iletisim', label: 'İletişim' },
+  { type: 'route', to: { name: 'blog' }, label: 'Blog', match: ['blog'] },
+]
+
+function sectionTo(hash) {
+  return isHome.value ? hash : `/${hash}`
+}
+
+function isLinkActive(link) {
+  if (link.type === 'route') {
+    return link.match.includes(route.name)
+  }
+  return false
+}
+
 function onMobileChange(event) {
   isMobile.value = event.matches
   if (!event.matches) {
     closeMenu()
   }
 }
-
-const links = [
-  { href: '#hakkimda', label: 'Hakkımda' },
-  { href: '#calisma-alanlarim', label: 'Çalışma Alanlarım' },
-  { href: '#yaklasim', label: 'Yaklaşım' },
-  { href: '#sertifikalarim', label: 'Sertifikalarım' },
-  { href: '#klinik', label: 'Kliniğimiz' },
-  { href: '#iletisim', label: 'İletişim' },
-]
 
 function onScroll() {
   if (!menuOpen.value) {
@@ -74,15 +92,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header class="header" :class="{ 'is-scrolled': scrolled, 'is-open': menuOpen }">
+  <header class="header" :class="{ 'is-scrolled': headerSolid, 'is-open': menuOpen }">
     <div class="container header__inner">
-      <a class="logo" href="#ust" @click="closeMenu">
+      <RouterLink class="logo" :to="{ name: 'home', hash: '#ust' }" @click="closeMenu">
         <span class="logo__mark" aria-hidden="true"></span>
         <span class="logo__text">
           <span>Özel Sağlık Hizmet Birimi</span>
           <span>Dil ve Konuşma Terapisti İlknur Coşkun Karaveli</span>
         </span>
-      </a>
+      </RouterLink>
 
       <button
         v-if="isMobile"
@@ -98,14 +116,25 @@ onUnmounted(() => {
       </button>
 
       <nav v-if="!isMobile" id="site-nav" class="nav nav--desktop">
-        <a
-          v-for="link in links"
-          :key="link.href"
-          :href="link.href"
-        >
-          {{ link.label }}
-        </a>
-        <a class="nav__cta" href="#iletisim">Randevu Al</a>
+        <template v-for="link in navLinks" :key="link.label">
+          <a
+            v-if="link.type === 'section'"
+            class="nav__link"
+            :href="sectionTo(link.hash)"
+          >
+            {{ link.label }}
+          </a>
+          <RouterLink
+            v-else
+            class="nav__link"
+            :class="{ 'is-active': isLinkActive(link) }"
+            active-class=""
+            :to="link.to"
+          >
+            {{ link.label }}
+          </RouterLink>
+        </template>
+        <a class="nav__cta" :href="sectionTo('#iletisim')">Randevu Al</a>
       </nav>
     </div>
   </header>
@@ -132,15 +161,25 @@ onUnmounted(() => {
     </div>
 
     <div class="mobile-nav__links">
-      <a
-        v-for="link in links"
-        :key="link.href"
-        :href="link.href"
-        @click="closeMenu"
-      >
-        {{ link.label }}
-      </a>
-      <a class="mobile-nav__cta" href="#iletisim" @click="closeMenu">Randevu Al</a>
+      <template v-for="link in navLinks" :key="link.label">
+        <a
+          v-if="link.type === 'section'"
+          :href="sectionTo(link.hash)"
+          @click="closeMenu"
+        >
+          {{ link.label }}
+        </a>
+        <RouterLink
+          v-else
+          :class="{ 'is-active': isLinkActive(link) }"
+          active-class=""
+          :to="link.to"
+          @click="closeMenu"
+        >
+          {{ link.label }}
+        </RouterLink>
+      </template>
+      <a class="mobile-nav__cta" :href="sectionTo('#iletisim')" @click="closeMenu">Randevu Al</a>
     </div>
   </dialog>
 </template>
@@ -222,25 +261,29 @@ onUnmounted(() => {
 .nav {
   display: flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: clamp(0.85rem, 1.4vw, 1.75rem);
+  flex-shrink: 0;
 }
 
-.nav--desktop a:not(.nav__cta) {
+.nav--desktop .nav__link {
   font-size: 0.92rem;
   font-weight: 400;
   color: #f7fbfa;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
-.nav--desktop a:not(.nav__cta):hover {
+.nav--desktop .nav__link:hover,
+.nav--desktop .nav__link.is-active {
   color: #fff;
 }
 
-.header.is-scrolled .nav--desktop a:not(.nav__cta) {
+.header.is-scrolled .nav--desktop .nav__link {
   color: var(--color-ink-soft);
 }
 
-.header.is-scrolled .nav--desktop a:not(.nav__cta):hover {
+.header.is-scrolled .nav--desktop .nav__link:hover,
+.header.is-scrolled .nav--desktop .nav__link.is-active {
   color: var(--color-brand);
 }
 
@@ -251,6 +294,7 @@ onUnmounted(() => {
   color: #f7fbfa !important;
   font-weight: 500 !important;
   font-size: 0.92rem;
+  white-space: nowrap;
 }
 
 .nav__cta:hover {
